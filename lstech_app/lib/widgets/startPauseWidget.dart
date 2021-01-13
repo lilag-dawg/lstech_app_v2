@@ -13,10 +13,12 @@ class StartPauseWidget extends StatefulWidget {
 
 class _StartPauseWidgetState extends State<StartPauseWidget> {
   bool isPlaying;
+  bool isShowingResetAndSaveButton;
 
   @override
   void initState() {
     isPlaying = false;
+    isShowingResetAndSaveButton = false;
     super.initState();
   }
 
@@ -27,11 +29,15 @@ class _StartPauseWidgetState extends State<StartPauseWidget> {
       } else {
         isPlaying = true;
       }
+      isShowingResetAndSaveButton = true;
     });
     widget.onIconPressed();
   }
 
   void handleReset() {
+    setState(() {
+      isShowingResetAndSaveButton = false;
+    });
     widget.onResetPressed();
   }
 
@@ -44,7 +50,7 @@ class _StartPauseWidgetState extends State<StartPauseWidget> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        isPlaying
+        isShowingResetAndSaveButton
             ? FlatButton(
                 child: Text("Reset"),
                 onPressed: () {
@@ -59,14 +65,14 @@ class _StartPauseWidgetState extends State<StartPauseWidget> {
           child: IconButton(
             icon: isPlaying ? Icon(Icons.pause) : Icon(Icons.play_arrow),
             color: Colors.white,
-            iconSize: 30,
+            iconSize: 40,
             onPressed: () {
               handleStartStop();
             },
           ),
         ),
         SizedBox(width: 30),
-        isPlaying
+        isShowingResetAndSaveButton
             ? FlatButton(
                 child: Text("Save"),
                 onPressed: () {

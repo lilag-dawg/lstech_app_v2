@@ -52,8 +52,8 @@ class StopwatchWidgetState extends State<StopwatchWidget> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.grey[350],
-      ),
+          //color: Colors.grey[350],
+          ),
       child: Column(
         children: [
           Text(
