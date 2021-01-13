@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:lstech_app/models/bluetoothDeviceManager.dart';
 import 'package:lstech_app/widgets/startPauseWidget.dart';
 import 'package:lstech_app/widgets/stopwatchWidget.dart';
+import 'package:provider/provider.dart';
 
 class TrainingScreen extends StatelessWidget {
   final GlobalKey<StopwatchWidgetState> _key = GlobalKey();
@@ -27,8 +29,31 @@ class TrainingScreen extends StatelessWidget {
     );
   }
 
+  Widget _batteryLevel(String nameOfSensor, int value) {
+    return Container(
+      padding: EdgeInsets.only(top: 10),
+      decoration: BoxDecoration(
+          //color: Colors.grey[350],
+          ),
+      child: Column(
+        children: [
+          Text(
+            nameOfSensor + " BATTERY LEVEL :",
+            style: TextStyle(fontSize: 12),
+          ),
+          Text(
+            value.toString() + " %",
+            style: TextStyle(fontSize: 70),
+          )
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    //final deviceManager = Provider.of<BluetoothDeviceManager>(context);
+
     return SingleChildScrollView(
       child: Container(
         child: Column(
@@ -57,6 +82,11 @@ class TrainingScreen extends StatelessWidget {
                   child: _trainingBox("HEARTH RATE", 146),
                 )
               ],
+            ),
+            _batteryLevel("Wattza421", 67),
+            SizedBox(
+              height:
+                  120, // todo not happy with this widget (find a away to anchor at bottom)
             ),
             StartPauseWidget(
               onIconPressed: () {
