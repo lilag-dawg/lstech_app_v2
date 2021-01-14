@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lstech_app/models/bluetoothDeviceManager.dart';
 import 'package:lstech_app/screens/bluetoothManagementScreen.dart';
+import 'package:lstech_app/screens/crankLengthScreen.dart';
 import 'package:provider/provider.dart';
 
 class SettingWidget extends StatelessWidget {
@@ -13,17 +14,36 @@ class SettingWidget extends StatelessWidget {
                 BluetoothManagementScreen(deviceManager: deviceManager)));
   }
 
-  Widget _customSettingCard(String title, String tag, BuildContext context,
+  void _handleTapCrankLength(
+      BuildContext context, BluetoothDeviceManager deviceManager) {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => CrankLengthScreen()));
+  }
+
+  Widget _customSettingCard(
+      String title,
+      IconData icon,
+      String subtitle,
+      String tag,
+      Color color,
+      BuildContext context,
       BluetoothDeviceManager deviceManager) {
-    return Card(
-      child: ListTile(
-        title: Text(title),
-        onTap: () {
-          if (tag == "ble") {
-            _handleTapBLE(context, deviceManager);
-          }
-        },
+    return ListTile(
+      title: Text(title),
+      leading: Icon(
+        icon,
+        size: 35,
+        color: color,
       ),
+      subtitle: Text(subtitle),
+      onTap: () {
+        if (tag == "ble") {
+          _handleTapBLE(context, deviceManager);
+        }
+        if (tag == "crank_length") {
+          _handleTapCrankLength(context, deviceManager);
+        }
+      },
     );
   }
 
@@ -33,8 +53,21 @@ class SettingWidget extends StatelessWidget {
     return Column(
       children: [
         _customSettingCard(
-            "Bluetooth management", "ble", context, deviceManager),
-        _customSettingCard("Language", "langue", context, deviceManager),
+            "Bluetooth management",
+            Icons.bluetooth,
+            "Connect to environnent devices",
+            "ble",
+            Colors.blueAccent,
+            context,
+            deviceManager),
+        _customSettingCard(
+            "Change crank Length",
+            Icons.miscellaneous_services,
+            "Customize the length of the crankset",
+            "crank_length",
+            Colors.purple,
+            context,
+            deviceManager),
       ],
     );
   }
