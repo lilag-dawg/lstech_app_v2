@@ -7,10 +7,10 @@ import 'package:provider/provider.dart';
 class TrainingScreen extends StatelessWidget {
   final GlobalKey<StopwatchWidgetState> _key = GlobalKey();
 
-  Widget _trainingBox(String units, int value) {
+  Widget _trainingBox(String units, int value, double sizeFactor) {
     // int will probably change for a stream
     return Container(
-      padding: EdgeInsets.only(top: 10),
+      padding: EdgeInsets.only(top: 5),
       decoration: BoxDecoration(
           //color: Colors.grey[350],
           ),
@@ -18,20 +18,20 @@ class TrainingScreen extends StatelessWidget {
         children: [
           Text(
             units,
-            style: TextStyle(fontSize: 12),
+            style: TextStyle(fontSize: 12 * sizeFactor),
           ),
           Text(
             value.toString(),
-            style: TextStyle(fontSize: 70),
+            style: TextStyle(fontSize: 70 * sizeFactor),
           )
         ],
       ),
     );
   }
 
-  Widget _batteryLevel(String nameOfSensor, int value) {
+  Widget _batteryLevel(String nameOfSensor, int value, double sizeFactor) {
     return Container(
-      padding: EdgeInsets.only(top: 10),
+      padding: EdgeInsets.only(top: 5),
       decoration: BoxDecoration(
           //color: Colors.grey[350],
           ),
@@ -39,11 +39,11 @@ class TrainingScreen extends StatelessWidget {
         children: [
           Text(
             nameOfSensor + " BATTERY LEVEL :",
-            style: TextStyle(fontSize: 12),
+            style: TextStyle(fontSize: 12 * sizeFactor),
           ),
           Text(
             value.toString() + " %",
-            style: TextStyle(fontSize: 70),
+            style: TextStyle(fontSize: 70 * sizeFactor),
           )
         ],
       ),
@@ -60,33 +60,25 @@ class TrainingScreen extends StatelessWidget {
           //mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Expanded(
-                  child: _trainingBox("POWER", 122),
-                ),
-                Expanded(
-                  child: _trainingBox("CADENCE", 78),
-                )
-              ],
-            ),
+            _trainingBox("POWER", 122, 1.75),
+            _trainingBox("CADENCE", 78, 1.75),
             StopwatchWidget(key: _key),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Expanded(
-                  child: _trainingBox("CALORIES", 20),
+                  child: _trainingBox("CALORIES", 20, 0.5),
                 ),
                 Expanded(
-                  child: _trainingBox("HEARTH RATE", 146),
+                  child: _trainingBox("HEARTH RATE", 146, 0.5),
+                ),
+                Expanded(
+                  child: _batteryLevel("Wattza421", 67, 0.5),
                 )
               ],
             ),
-            _batteryLevel("Wattza421", 67),
             SizedBox(
-              height:
-                  120, // todo not happy with this widget (find a away to anchor at bottom)
+              height: 20,
             ),
             StartPauseWidget(
               onIconPressed: () {
