@@ -5,7 +5,7 @@ import './bluetoothDeviceService.dart';
 class MyBluetoothDevice {
   final BluetoothDevice device;
 
-  List<DataType> supportedDataType;
+  Map<DataType, Stream<int>> supportedDataType = {};
 
   List<BluetoothDeviceService> services = [];
 
@@ -30,18 +30,26 @@ class MyBluetoothDevice {
   }
 
   void _setSupportedDataType(BluetoothDeviceService service) {
-    // ce n'est pas encore testé
-    if (service.name == "1818") {
-      supportedDataType.add(DataType.power);
+    if (service.serviceName == "1818") {
+      supportedDataType[DataType.power] = powerStream(
+          service.getCharacteristic(powerCharactetistic).characteristic);
     }
-    if (service.name == "1816") {
-      supportedDataType.add(DataType.power);
+    if (service.serviceName == "1816") {
+      //supportedDataType.add(DataType.cadence);
     }
-    if (service.name == "180F") {
-      supportedDataType.add(DataType.battery);
+    if (service.serviceName == "180F") {
+      //supportedDataType.add(DataType.battery);
     }
-    if (service.name == "180D") {
-      supportedDataType.add(DataType.cardiac);
+    if (service.serviceName == "180D") {
+      //supportedDataType.add(DataType.cardiac);
+    }
+  }
+
+  Stream<int> powerStream(BluetoothCharacteristic c) async* {
+    await for (var chunk in c.value) {
+      if (chunk.isNotEmpty) {
+        yield chunk[1]; //not sure if this is the right number for power
+      }
     }
   }
 

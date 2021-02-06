@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lstech_app/models/bluetoothDeviceManager.dart';
+import 'package:lstech_app/models/recognizedData.dart';
 import 'package:lstech_app/widgets/startPauseWidget.dart';
 import 'package:lstech_app/widgets/stopwatchWidget.dart';
 import 'package:provider/provider.dart';
@@ -7,7 +8,7 @@ import 'package:provider/provider.dart';
 class TrainingScreen extends StatelessWidget {
   final GlobalKey<StopwatchWidgetState> _key = GlobalKey();
 
-  Widget _trainingBox(String units, int value, double sizeFactor) {
+  Widget _trainingBox(String units, Stream<int> source, double sizeFactor) {
     // int will probably change for a stream
     return Container(
       padding: EdgeInsets.only(top: 5),
@@ -20,10 +21,14 @@ class TrainingScreen extends StatelessWidget {
             units,
             style: TextStyle(fontSize: 12 * sizeFactor),
           ),
-          Text(
-            value.toString(),
-            style: TextStyle(fontSize: 70 * sizeFactor),
-          )
+          StreamBuilder<int>(
+              stream: source,
+              builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
+                return Text(
+                  snapshot.data.toString(),
+                  style: TextStyle(fontSize: 70 * sizeFactor),
+                );
+              })
         ],
       ),
     );
@@ -52,7 +57,17 @@ class TrainingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //final deviceManager = Provider.of<BluetoothDeviceManager>(context);
+    final deviceManager = Provider.of<BluetoothDeviceManager>(context);
+
+    Stream<int> powerStream;
+    Stream<int> cscStream;
+    Stream<int> batteryStream;
+    Stream<int> calorieStream;
+    Stream<int> hearthRateStream;
+
+    if (deviceManager != null) {
+      powerStream = deviceManager.ossDevice.supportedDataType[DataType.power];
+    }
 
     return SingleChildScrollView(
       child: Container(
@@ -60,17 +75,17 @@ class TrainingScreen extends StatelessWidget {
           //mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _trainingBox("POWER", 122, 1.75),
-            _trainingBox("CADENCE", 78, 1.75),
+            _trainingBox("POWER", powerStream, 1.75),
+            _trainingBox("CADENCE", cscStream, 1.75),
             StopwatchWidget(key: _key),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Expanded(
-                  child: _trainingBox("CALORIES", 20, 0.5),
+                  child: _trainingBox("CALORIES", calorieStream, 0.5),
                 ),
                 Expanded(
-                  child: _trainingBox("HEARTH RATE", 146, 0.5),
+                  child: _trainingBox("HEARTH RATE", hearthRateStream, 0.5),
                 ),
                 Expanded(
                   child: _batteryLevel("Wattza421", 67, 0.5),

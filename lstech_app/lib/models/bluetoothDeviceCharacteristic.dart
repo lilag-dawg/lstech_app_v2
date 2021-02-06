@@ -1,4 +1,5 @@
 import 'package:flutter_blue/flutter_blue.dart';
+import 'package:lstech_app/models/recognizedData.dart';
 
 class BluetoothDeviceCharacteristic {
   final String characteristicName;
@@ -12,6 +13,19 @@ class BluetoothDeviceCharacteristic {
     BluetoothDeviceCharacteristic myCharacteristic =
         BluetoothDeviceCharacteristic._create(
             characteristicName, characteristic);
+    switch (characteristicName) {
+      case powerCharactetistic:
+        await characteristic.setNotifyValue(true);
+        break;
+      case cscCharactetistic:
+        await characteristic.setNotifyValue(true);
+        break;
+      case batteryCharacteristic:
+        await characteristic.setNotifyValue(true);
+        break;
+      default:
+        break;
+    }
     return myCharacteristic;
   }
 
