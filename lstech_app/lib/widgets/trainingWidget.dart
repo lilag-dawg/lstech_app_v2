@@ -34,7 +34,8 @@ class TrainingScreen extends StatelessWidget {
     );
   }
 
-  Widget _batteryLevel(String nameOfSensor, int value, double sizeFactor) {
+  Widget _batteryLevel(
+      String nameOfSensor, Stream<int> source, double sizeFactor) {
     return Container(
       padding: EdgeInsets.only(top: 5),
       decoration: BoxDecoration(
@@ -46,10 +47,14 @@ class TrainingScreen extends StatelessWidget {
             nameOfSensor + " BATTERY LEVEL :",
             style: TextStyle(fontSize: 12 * sizeFactor),
           ),
-          Text(
-            value.toString() + " %",
-            style: TextStyle(fontSize: 70 * sizeFactor),
-          )
+          StreamBuilder<int>(
+              stream: source,
+              builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
+                return Text(
+                  snapshot.data.toString() + " %",
+                  style: TextStyle(fontSize: 70 * sizeFactor),
+                );
+              })
         ],
       ),
     );
@@ -60,13 +65,17 @@ class TrainingScreen extends StatelessWidget {
     final deviceManager = Provider.of<BluetoothDeviceManager>(context);
 
     Stream<int> powerStream;
-    Stream<int> cscStream;
+    Stream<int> cadenceStream;
     Stream<int> batteryStream;
     Stream<int> calorieStream;
     Stream<int> hearthRateStream;
 
-    if (deviceManager != null) {
+    if (deviceManager.ossDevice != null) {
       powerStream = deviceManager.ossDevice.supportedDataType[DataType.power];
+      cadenceStream =
+          deviceManager.ossDevice.supportedDataType[DataType.cadence];
+      batteryStream =
+          deviceManager.ossDevice.supportedDataType[DataType.battery];
     }
 
     return SingleChildScrollView(
@@ -76,7 +85,7 @@ class TrainingScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             _trainingBox("POWER", powerStream, 1.75),
-            _trainingBox("CADENCE", cscStream, 1.75),
+            _trainingBox("CADENCE", cadenceStream, 1.75),
             StopwatchWidget(key: _key),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -88,7 +97,7 @@ class TrainingScreen extends StatelessWidget {
                   child: _trainingBox("HEARTH RATE", hearthRateStream, 0.5),
                 ),
                 Expanded(
-                  child: _batteryLevel("Wattza421", 67, 0.5),
+                  child: _batteryLevel("Wattza421", batteryStream, 0.5),
                 )
               ],
             ),

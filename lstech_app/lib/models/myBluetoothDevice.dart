@@ -35,10 +35,12 @@ class MyBluetoothDevice {
           service.getCharacteristic(powerCharactetistic).characteristic);
     }
     if (service.serviceName == "1816") {
-      //supportedDataType.add(DataType.cadence);
+      supportedDataType[DataType.cadence] = cadenceStream(
+          service.getCharacteristic(cscCharactetistic).characteristic);
     }
     if (service.serviceName == "180F") {
-      //supportedDataType.add(DataType.battery);
+      supportedDataType[DataType.battery] = batteryStream(
+          service.getCharacteristic(batteryCharacteristic).characteristic);
     }
     if (service.serviceName == "180D") {
       //supportedDataType.add(DataType.cardiac);
@@ -48,8 +50,82 @@ class MyBluetoothDevice {
   Stream<int> powerStream(BluetoothCharacteristic c) async* {
     await for (var chunk in c.value) {
       if (chunk.isNotEmpty) {
-        yield chunk[1]; //not sure if this is the right number for power
+        yield chunk[2] +
+            chunk[1]; //not sure if this is the right number for power
       }
+    }
+  }
+
+  Stream<int> batteryStream(BluetoothCharacteristic c) async* {
+    await for (var chunk in c.value) {
+      if (chunk.isNotEmpty) {
+        yield chunk[0];
+      }
+    }
+  }
+
+  Stream<int> cadenceStream(BluetoothCharacteristic c) async* {
+    int flag = 0;
+    int currentCrankRev = 0;
+    int lastCrankRev = 0;
+    int currentCrankTime = 0;
+    int lastCrankTime = 0;
+    int lastCadence = 0;
+    int currentCadence = 0;
+    int zeroCount =
+        0; // used to count how mnay consecutive value are 0, if count is superior to 3 --> reset cadence
+
+    await for (var chunk in c.value) {
+      if (chunk.isNotEmpty) {
+        flag = chunk[0];
+        switch (flag) {
+          case 1:
+            //no cadence value here
+            break;
+          case 2:
+            lastCrankRev = currentCrankRev;
+            currentCrankRev = (chunk[2] << 8) + chunk[1];
+            lastCrankTime = currentCrankTime;
+            currentCrankTime = ((chunk[4] << 8) + chunk[3]);
+            break;
+          case 3:
+            lastCrankRev = currentCrankRev;
+            currentCrankRev = (chunk[8] << 8) + chunk[7];
+            lastCrankTime = currentCrankTime;
+            currentCrankTime = ((chunk[10] << 8) + chunk[9]);
+            break;
+          default:
+            break;
+        }
+        if (lastCrankRev != 0 && currentCrankRev != 0) {
+          if (currentCadence == lastCadence) {
+            zeroCount += 1;
+          } else {
+            zeroCount = 0;
+          }
+          lastCadence = currentCadence;
+          currentCadence = convertRawToCadence(currentCrankRev, lastCrankRev,
+              currentCrankTime, lastCrankTime, lastCadence, zeroCount);
+          yield currentCadence;
+        }
+      }
+    }
+  }
+
+  int convertRawToCadence(int currentCrankRev, int lastCrankRev,
+      int currentCrankTime, int lastCrankTime, int lastCadence, int zeroCount) {
+    int currentCadence = 0;
+    if (currentCrankTime < lastCrankTime) {
+      currentCrankTime = currentCrankTime + 65536;
+    }
+    if (currentCrankTime == lastCrankTime ||
+        (currentCrankRev == lastCrankRev && zeroCount < 3)) {
+      return lastCadence;
+    } else {
+      currentCadence = ((currentCrankRev - lastCrankRev) *
+          (1024 * 60) ~/
+          (currentCrankTime - lastCrankTime));
+      return currentCadence;
     }
   }
 
