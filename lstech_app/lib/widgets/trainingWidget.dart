@@ -69,6 +69,7 @@ class TrainingScreen extends StatelessWidget {
     Stream<int> batteryStream;
     Stream<int> calorieStream;
     Stream<int> hearthRateStream;
+    String deviceName;
 
     if (deviceManager.ossDevice != null) {
       powerStream = deviceManager.ossDevice.supportedDataType[DataType.power];
@@ -76,6 +77,7 @@ class TrainingScreen extends StatelessWidget {
           deviceManager.ossDevice.supportedDataType[DataType.cadence];
       batteryStream =
           deviceManager.ossDevice.supportedDataType[DataType.battery];
+      deviceName = deviceManager.ossDevice.device.name;
     }
 
     return SingleChildScrollView(
@@ -91,13 +93,13 @@ class TrainingScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Expanded(
-                  child: _trainingBox("CALORIES", calorieStream, 0.5),
+                  child: _trainingBox("CALORIES", calorieStream, 0.7),
                 ),
                 Expanded(
-                  child: _trainingBox("HEARTH RATE", hearthRateStream, 0.5),
+                  child: _trainingBox("HEARTH RATE", hearthRateStream, 0.7),
                 ),
                 Expanded(
-                  child: _batteryLevel("Wattza421", batteryStream, 0.5),
+                  child: _batteryLevel(deviceName, batteryStream, 0.7),
                 )
               ],
             ),

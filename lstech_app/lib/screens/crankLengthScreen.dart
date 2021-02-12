@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:lstech_app/models/bluetoothDeviceCharacteristic.dart';
+import 'package:provider/provider.dart';
+import 'package:lstech_app/models/bluetoothDeviceManager.dart';
+import 'package:lstech_app/models/recognizedData.dart';
+
+import 'bluetoothManagementScreen.dart';
 
 class CrankLengthScreen extends StatefulWidget {
   @override
@@ -7,8 +13,10 @@ class CrankLengthScreen extends StatefulWidget {
 
 class _CrankLengthScreenState extends State<CrankLengthScreen> {
   final myController = TextEditingController();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  Future<void> _showDialog() async {
+  Future<void> _showDialog(BluetoothDeviceManager deviceManager) async {
+    BluetoothDeviceCharacteristic char;
     return showDialog(
         context: context,
         barrierDismissible: false,
@@ -22,7 +30,13 @@ class _CrankLengthScreenState extends State<CrankLengthScreen> {
             actions: [
               TextButton(
                 child: Text("Apply"),
-                onPressed: () {
+                onPressed: () async {
+                  char = deviceManager.ossDevice
+                      .getService("1818")
+                      .getCharacteristic(powerWriteCharactetistic);
+                  if (char != null) {
+                    //await char.characteristic.write();
+                  }
                   Navigator.of(context).pop();
                 },
               ),
@@ -37,6 +51,29 @@ class _CrankLengthScreenState extends State<CrankLengthScreen> {
         });
   }
 
+  void showInSnackBar(String value, BuildContext context,
+      BluetoothDeviceManager deviceManager) {
+    final snackBar = SnackBar(
+      content: Text(value),
+      action: SnackBarAction(
+        label: 'GO',
+        onPressed: () {
+          _handleTapBLE(context, deviceManager);
+        },
+      ),
+    );
+    _scaffoldKey.currentState.showSnackBar(snackBar);
+  }
+
+  void _handleTapBLE(
+      BuildContext context, BluetoothDeviceManager deviceManager) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                BluetoothManagementScreen(deviceManager: deviceManager)));
+  }
+
   @override
   void dispose() {
     myController.dispose();
@@ -45,7 +82,10 @@ class _CrankLengthScreenState extends State<CrankLengthScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final deviceManager = Provider.of<BluetoothDeviceManager>(context);
+
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text("Crank Length"),
       ),
@@ -62,7 +102,14 @@ class _CrankLengthScreenState extends State<CrankLengthScreen> {
               OutlineButton(
                 child: Text("CHANGE"),
                 onPressed: () async {
-                  await _showDialog();
+                  if (deviceManager.ossDevice != null) {
+                    await _showDialog(deviceManager);
+                  } else {
+                    showInSnackBar(
+                        "No device found! Click to connect to a device",
+                        context,
+                        deviceManager);
+                  }
                 },
               ),
             ],
