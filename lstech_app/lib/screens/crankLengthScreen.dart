@@ -15,6 +15,60 @@ class _CrankLengthScreenState extends State<CrankLengthScreen> {
   final myController = TextEditingController();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
+  final minValue = 100;
+  final maxValue = 8000;
+  String cranklength;
+
+  List<int> encodeDoubleToListInt(double valueInDouble) {
+    List<int> result = [];
+    int valueInInt = valueInDouble.toInt();
+    if (valueInDouble % 1 == 0) {
+      result.add((valueInInt & 0xFF) << 1);
+    } else {
+      result.add(((valueInInt & 0xFF) << 1) + 1);
+    }
+    result.add(valueInInt >> 7);
+    return result;
+  }
+
+  String decodeListIntToString(List<int> value) {
+    String text;
+    print(value);
+    if (value.length != 1) {
+      text = ((value[0] >> 1) + (value[1] << 7)).toString();
+    } else {
+      text = (value[0] >> 1).toString();
+    }
+    if (value[0] & 0x1 == 1) {
+      text = text + ".5";
+    }
+    return text;
+  }
+
+  Future<void> _showTextControlDialog() {
+    return showDialog(
+        context: context,
+        barrierDismissible: true,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Error with value"),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: [Text("Value must be between 100 and 300 mm")],
+              ),
+            ),
+            actions: [
+              TextButton(
+                child: Text("Ok"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          );
+        });
+  }
+
   Future<void> _showDialog(BluetoothDeviceManager deviceManager) async {
     BluetoothDeviceCharacteristic char;
     return showDialog(
@@ -25,8 +79,8 @@ class _CrankLengthScreenState extends State<CrankLengthScreen> {
             title: Text("Change Crank Length"),
             content: TextField(
                 controller: myController,
-                decoration:
-                    InputDecoration(hintText: "Enter crank length value")),
+                decoration: InputDecoration(
+                    hintText: "Enter crank length value in mm")),
             actions: [
               TextButton(
                 child: Text("Apply"),
@@ -35,9 +89,23 @@ class _CrankLengthScreenState extends State<CrankLengthScreen> {
                       .getService("1818")
                       .getCharacteristic(powerWriteCharactetistic);
                   if (char != null) {
-                    //await char.characteristic.write();
+                    if (num.tryParse(myController.text) == null ||
+                        minValue > double.parse(myController.text) ||
+                        double.parse(myController.text) > maxValue) {
+                      await _showTextControlDialog();
+                    } else {
+                      List<int> dataToSend = encodeDoubleToListInt(
+                          double.parse(myController.text));
+                      await char.characteristic.write(
+                          [0x04, dataToSend[0], dataToSend[1]]).then((_) {
+                        Navigator.of(context).pop();
+                        setState(() {
+                          cranklength =
+                              myController.text; //only used to rerender page
+                        });
+                      });
+                    }
                   }
-                  Navigator.of(context).pop();
                 },
               ),
               TextButton(
@@ -74,6 +142,29 @@ class _CrankLengthScreenState extends State<CrankLengthScreen> {
                 BluetoothManagementScreen(deviceManager: deviceManager)));
   }
 
+  Future<String> currentCrankLengthValue(
+      BluetoothDeviceManager deviceManager) async {
+    BluetoothDeviceCharacteristic char;
+    String text;
+    if (deviceManager.ossDevice == null) {
+      text = "-";
+    } else {
+      char = deviceManager.ossDevice
+          .getService("1818")
+          .getCharacteristic(powerWriteCharactetistic);
+      if (char != null) {
+        await char.characteristic.write([0x05]);
+        await for (List<int> value in char.characteristic.value) {
+          if (value.isNotEmpty) {
+            text = decodeListIntToString(value);
+            break;
+          }
+        }
+      }
+    }
+    return text;
+  }
+
   @override
   void dispose() {
     myController.dispose();
@@ -95,10 +186,25 @@ class _CrankLengthScreenState extends State<CrankLengthScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text("Crank Length (MM)", style: TextStyle(fontSize: 12)),
-              Text(
-                "12.45",
-                style: TextStyle(fontSize: 70),
-              ),
+              FutureBuilder(
+                  future: currentCrankLengthValue(deviceManager),
+                  builder:
+                      (BuildContext context, AsyncSnapshot<String> snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return CircularProgressIndicator();
+                    } else {
+                      if (snapshot.hasData) {
+                        return Text(
+                          snapshot.data,
+                          style: TextStyle(fontSize: 70),
+                        );
+                      }
+                      return Text(
+                        " - ",
+                        style: TextStyle(fontSize: 70),
+                      );
+                    }
+                  }),
               OutlineButton(
                 child: Text("CHANGE"),
                 onPressed: () async {

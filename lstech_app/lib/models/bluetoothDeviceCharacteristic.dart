@@ -23,6 +23,9 @@ class BluetoothDeviceCharacteristic {
       case batteryCharacteristic:
         await characteristic.setNotifyValue(true);
         break;
+      case powerWriteCharactetistic:
+        await characteristic.setNotifyValue(true);
+        break;
       default:
         break;
     }
