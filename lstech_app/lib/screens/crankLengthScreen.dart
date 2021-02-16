@@ -15,9 +15,11 @@ class _CrankLengthScreenState extends State<CrankLengthScreen> {
   final myController = TextEditingController();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  final minValue = 100;
-  final maxValue = 8000;
+  final minValue = 160;
+  final maxValue = 180;
   String cranklength;
+
+  final double sizeFactor = 2;
 
   List<int> encodeDoubleToListInt(double valueInDouble) {
     List<int> result = [];
@@ -54,7 +56,7 @@ class _CrankLengthScreenState extends State<CrankLengthScreen> {
             title: Text("Error with value"),
             content: SingleChildScrollView(
               child: ListBody(
-                children: [Text("Value must be between 100 and 300 mm")],
+                children: [Text("Value must be between 160 and 180mm")],
               ),
             ),
             actions: [
@@ -185,7 +187,8 @@ class _CrankLengthScreenState extends State<CrankLengthScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text("Crank Length (MM)", style: TextStyle(fontSize: 12)),
+              Text("Crank Length (MM)",
+                  style: TextStyle(fontSize: 12 * sizeFactor)),
               FutureBuilder(
                   future: currentCrankLengthValue(deviceManager),
                   builder:
@@ -196,17 +199,18 @@ class _CrankLengthScreenState extends State<CrankLengthScreen> {
                       if (snapshot.hasData) {
                         return Text(
                           snapshot.data,
-                          style: TextStyle(fontSize: 70),
+                          style: TextStyle(fontSize: 70 * sizeFactor),
                         );
                       }
                       return Text(
                         " - ",
-                        style: TextStyle(fontSize: 70),
+                        style: TextStyle(fontSize: 70 * sizeFactor),
                       );
                     }
                   }),
               OutlineButton(
-                child: Text("CHANGE"),
+                child:
+                    Text("CHANGE", style: TextStyle(fontSize: 12 * sizeFactor)),
                 onPressed: () async {
                   if (deviceManager.ossDevice != null) {
                     await _showDialog(deviceManager);

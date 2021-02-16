@@ -9,7 +9,6 @@ class TrainingScreen extends StatelessWidget {
   final GlobalKey<StopwatchWidgetState> _key = GlobalKey();
 
   Widget _trainingBox(String units, Stream<int> source, double sizeFactor) {
-    // int will probably change for a stream
     return Container(
       padding: EdgeInsets.only(top: 5),
       decoration: BoxDecoration(
@@ -24,10 +23,17 @@ class TrainingScreen extends StatelessWidget {
           StreamBuilder<int>(
               stream: source,
               builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
-                return Text(
-                  snapshot.data.toString(),
-                  style: TextStyle(fontSize: 70 * sizeFactor),
-                );
+                if (snapshot.hasData) {
+                  return Text(
+                    snapshot.data.toString(),
+                    style: TextStyle(fontSize: 70 * sizeFactor),
+                  );
+                } else {
+                  return Text(
+                    " - ",
+                    style: TextStyle(fontSize: 70 * sizeFactor),
+                  );
+                }
               })
         ],
       ),
@@ -36,6 +42,9 @@ class TrainingScreen extends StatelessWidget {
 
   Widget _batteryLevel(
       String nameOfSensor, Stream<int> source, double sizeFactor) {
+    if (nameOfSensor == null) {
+      nameOfSensor = " - ";
+    }
     return Container(
       padding: EdgeInsets.only(top: 5),
       decoration: BoxDecoration(
@@ -50,10 +59,17 @@ class TrainingScreen extends StatelessWidget {
           StreamBuilder<int>(
               stream: source,
               builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
-                return Text(
-                  snapshot.data.toString() + " %",
-                  style: TextStyle(fontSize: 70 * sizeFactor),
-                );
+                if (snapshot.hasData) {
+                  return Text(
+                    snapshot.data.toString() + " %",
+                    style: TextStyle(fontSize: 70 * sizeFactor),
+                  );
+                } else {
+                  return Text(
+                    " -  %",
+                    style: TextStyle(fontSize: 70 * sizeFactor),
+                  );
+                }
               })
         ],
       ),
