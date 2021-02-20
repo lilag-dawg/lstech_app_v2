@@ -29,7 +29,10 @@ class _NavigationScreenState extends State<NavigationScreen> {
       appBar: AppBar(
         title: Text("LsTech+ app"),
       ),
-      body: _widgetOptions.elementAt(_selectedIndex),
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: _widgetOptions,
+      ),
       bottomNavigationBar: BottomNavigationBar(
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),

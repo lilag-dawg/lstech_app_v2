@@ -59,9 +59,8 @@ class _StartPauseWidgetState extends State<StartPauseWidget> {
               )
             : SizedBox.shrink(),
         SizedBox(width: 30),
-        Ink(
-          decoration:
-              ShapeDecoration(color: Colors.blue, shape: CircleBorder()),
+        Container(
+          color: Colors.blue,
           child: IconButton(
             icon: isPlaying ? Icon(Icons.pause) : Icon(Icons.play_arrow),
             color: Colors.white,
