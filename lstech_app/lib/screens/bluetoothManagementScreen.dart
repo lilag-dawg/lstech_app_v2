@@ -5,8 +5,10 @@ import 'package:flutter_blue/flutter_blue.dart';
 import 'package:lstech_app/models/bluetoothDeviceConnexionStatus.dart';
 import 'package:lstech_app/models/myBluetoothDevice.dart';
 import 'package:lstech_app/widgets/customBluetoothTile.dart';
+import 'package:lstech_app/constant.dart' as constant;
 
 import '../models/bluetoothDeviceManager.dart';
+import 'deviceInformationScreen.dart';
 
 final bool isWorkingOnEmulator = false;
 
@@ -107,6 +109,15 @@ class _BluetoothManagementScreenState extends State<BluetoothManagementScreen> {
     });
   }
 
+  void _handleTrailingPressed(BuildContext context) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => DeviceInformationScreen(
+                  deviceManager: widget.deviceManager,
+                )));
+  }
+
   List<Widget> _buildCustomTiles(List<BluetoothDeviceConnexionStatus> result) {
     return result
         .map(
@@ -118,6 +129,9 @@ class _BluetoothManagementScreenState extends State<BluetoothManagementScreen> {
                     BluetoothDeviceConnexionStatus.inTransistion;
               });
               await _handleOnpressChanged(d, currentStatus);
+            },
+            onTrailingPress: (BuildContext context) {
+              _handleTrailingPressed(context);
             },
           ),
         )
@@ -138,14 +152,15 @@ class _BluetoothManagementScreenState extends State<BluetoothManagementScreen> {
               ),
             );
           } else {
-            return RaisedButton(
-                child: Text("find Device"),
-                onPressed: () {
-                  setState(() {
-                    isDoneScanning = false;
-                  });
-                  startAScan();
-                });
+            return Center(
+                child: RaisedButton(
+                    child: Text("Search for Wattza"),
+                    onPressed: () {
+                      setState(() {
+                        isDoneScanning = false;
+                      });
+                      startAScan();
+                    }));
           }
         });
   }
@@ -192,10 +207,9 @@ class _BluetoothManagementScreenState extends State<BluetoothManagementScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.grey,
         appBar: AppBar(
           title: Text("Bluetooth Manager"),
-          //backgroundColor: Color(Constants.blueButtonColor),
+          backgroundColor: constant.lsTechGreen,
         ),
         body: SingleChildScrollView(
           child: Column(children: <Widget>[

@@ -6,8 +6,10 @@ import 'package:lstech_app/models/bluetoothDeviceConnexionStatus.dart';
 class CustomBluetoothTile extends StatelessWidget {
   final BluetoothDeviceConnexionStatus currentDevice;
   final Function(String) onTapTile;
+  final Function(BuildContext) onTrailingPress;
 
-  const CustomBluetoothTile({this.currentDevice, this.onTapTile});
+  const CustomBluetoothTile(
+      {this.currentDevice, this.onTapTile, this.onTrailingPress});
 
   void _handleTapTile() {
     onTapTile(currentDevice.connexionStatus);
@@ -53,6 +55,19 @@ class CustomBluetoothTile extends StatelessWidget {
     }
   }
 
+  Widget _buildTrailing(BuildContext context) {
+    if (currentDevice.connexionStatus ==
+        BluetoothDeviceConnexionStatus.connected) {
+      return IconButton(
+          icon: Icon(Icons.settings),
+          onPressed: () {
+            onTrailingPress(context);
+          });
+    } else {
+      return SizedBox.shrink();
+    }
+  }
+
   Color _buildColor() {
     if (currentDevice.connexionStatus ==
         BluetoothDeviceConnexionStatus.connected) {
@@ -76,6 +91,7 @@ class CustomBluetoothTile extends StatelessWidget {
             onTap: () {
               _handleTapTile();
             },
+            trailing: _buildTrailing(context),
             enabled: (currentDevice.connexionStatus ==
                     BluetoothDeviceConnexionStatus.inTransistion)
                 ? false

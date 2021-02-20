@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lstech_app/constant.dart' as constant;
 
 class StartPauseWidget extends StatefulWidget {
   final Function onIconPressed;
@@ -60,7 +61,9 @@ class _StartPauseWidgetState extends State<StartPauseWidget> {
             : SizedBox.shrink(),
         SizedBox(width: 30),
         Container(
-          color: Colors.blue,
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(20)),
+              color: constant.lsTechGreen),
           child: IconButton(
             icon: isPlaying ? Icon(Icons.pause) : Icon(Icons.play_arrow),
             color: Colors.white,

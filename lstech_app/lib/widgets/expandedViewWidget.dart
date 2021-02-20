@@ -9,10 +9,31 @@ class ExpandedViewWidget extends StatefulWidget {
 }
 
 class _ExpandedViewWidgetState extends State<ExpandedViewWidget> {
+  List<Widget> _body(List<ExpandedValue> content) {
+    return content
+        .map(
+          (c) => Column(
+            children: [
+              ListTile(
+                title: Text(c.text),
+              ),
+              (c.imageUrl != null)
+                  ? Image.asset(
+                      c.imageUrl,
+                      fit: BoxFit.contain,
+                    )
+                  : SizedBox.shrink()
+            ],
+          ),
+        )
+        .toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListView(
       shrinkWrap: true,
+      scrollDirection: Axis.vertical,
       children: [
         ExpansionPanelList(
           expansionCallback: (int index, bool isExpanded) {
@@ -27,7 +48,9 @@ class _ExpandedViewWidgetState extends State<ExpandedViewWidget> {
                   title: Text(widget.data.headerValue),
                 );
               },
-              body: Text(widget.data.expandedValue),
+              body: Column(
+                children: _body(widget.data.body),
+              ),
               isExpanded: widget.data.isExpanded,
             ),
           ],

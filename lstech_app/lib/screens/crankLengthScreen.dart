@@ -3,6 +3,7 @@ import 'package:lstech_app/models/bluetoothDeviceCharacteristic.dart';
 import 'package:provider/provider.dart';
 import 'package:lstech_app/models/bluetoothDeviceManager.dart';
 import 'package:lstech_app/models/recognizedData.dart';
+import 'package:lstech_app/constant.dart' as constant;
 
 import 'bluetoothManagementScreen.dart';
 
@@ -181,6 +182,7 @@ class _CrankLengthScreenState extends State<CrankLengthScreen> {
       key: _scaffoldKey,
       appBar: AppBar(
         title: Text("Crank Length"),
+        backgroundColor: constant.lsTechGreen,
       ),
       body: Center(
         child: Container(
