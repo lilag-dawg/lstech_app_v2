@@ -29,6 +29,8 @@ class DeviceInformationScreen extends StatelessWidget {
       if (char != null) {
         List<int> value = await char.characteristic.read();
         text = convertRawToString(value);
+      } else {
+        text = null;
       }
       switch (id) {
         case manufacturerNameCharactetistic:

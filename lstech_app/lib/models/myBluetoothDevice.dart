@@ -50,9 +50,23 @@ class MyBluetoothDevice {
   Stream<int> powerStream(BluetoothCharacteristic c) async* {
     await for (var chunk in c.value) {
       if (chunk.isNotEmpty) {
-        yield chunk[2] +
-            chunk[1]; //not sure if this is the right number for power
+        yield chunk[2] + chunk[1];
       }
+    }
+  }
+
+  Stream<double> calorieStream(Stream<int> source) async* {
+    List<int> last3power = [0, 0, 0];
+    int i = 0;
+    double value = 0;
+    await for (var chunk in source) {
+      last3power[i] = chunk;
+      i++;
+      if (i == 3) {
+        i = 0;
+      }
+      value += (last3power[0] + last3power[1] + last3power[2]) / 3 / 4184;
+      yield value;
     }
   }
 

@@ -48,6 +48,14 @@ class StopwatchWidgetState extends State<StopwatchWidget> {
     _stopwatch.reset();
   }
 
+  int getTime() {
+    return _stopwatch.elapsedMilliseconds ~/ 1000;
+  }
+
+  bool getTimerStatus() {
+    return _stopwatch.isRunning;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(

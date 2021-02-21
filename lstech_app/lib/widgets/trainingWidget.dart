@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:lstech_app/models/bluetoothDeviceManager.dart';
 import 'package:lstech_app/models/recognizedData.dart';
@@ -26,6 +27,39 @@ class TrainingScreen extends StatelessWidget {
                 if (snapshot.hasData) {
                   return Text(
                     snapshot.data.toString(),
+                    style: TextStyle(fontSize: 70 * sizeFactor),
+                  );
+                } else {
+                  return Text(
+                    " - ",
+                    style: TextStyle(fontSize: 70 * sizeFactor),
+                  );
+                }
+              })
+        ],
+      ),
+    );
+  }
+
+  Widget _trainingBoxCalories(
+      String units, Stream<double> source, double sizeFactor) {
+    return Container(
+      padding: EdgeInsets.only(top: 5),
+      decoration: BoxDecoration(
+          //color: Colors.grey[350],
+          ),
+      child: Column(
+        children: [
+          Text(
+            units,
+            style: TextStyle(fontSize: 12 * sizeFactor),
+          ),
+          StreamBuilder<double>(
+              stream: source,
+              builder: (BuildContext context, AsyncSnapshot<double> snapshot) {
+                if (snapshot.hasData) {
+                  return Text(
+                    snapshot.data.toStringAsFixed(2),
                     style: TextStyle(fontSize: 70 * sizeFactor),
                   );
                 } else {
@@ -79,21 +113,71 @@ class TrainingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final deviceManager = Provider.of<BluetoothDeviceManager>(context);
+    int currentTimerTime = 0;
+    bool isTimerRunning = false;
+
+    Timer.periodic(Duration(seconds: 1), (timer) {
+      currentTimerTime = _key.currentState.getTime();
+    });
 
     Stream<int> powerStream;
     Stream<int> cadenceStream;
     Stream<int> batteryStream;
-    Stream<int> calorieStream;
     Stream<int> hearthRateStream;
+    Stream<double> calorieStream;
     String deviceName;
 
+    Stream<double> calorieStreamFunction() async* {
+      List<PowerData> powerReading =
+          List<PowerData>.generate(10, (_) => PowerData(0, 0));
+      int i = 0;
+      int k = 0;
+      int sum = 0;
+      double value = 0;
+      int currentTime = 0;
+      await for (var chunk in powerStream) {
+        currentTime = currentTimerTime;
+        if (isTimerRunning) {
+          k = 0;
+          sum = 0;
+          powerReading[i].time = currentTime;
+          powerReading[i].power = chunk;
+          i++;
+          if (i == 10) {
+            i = 0;
+          }
+          for (PowerData p in powerReading) {
+            if (p.time <= currentTime && p.time >= currentTime - 3) {
+              sum += p.power;
+              k++;
+            }
+          }
+          if (k != 0) {
+            value = (3 * (sum / k) / 4184) * currentTime;
+          } else {
+            value = 0;
+          }
+        } else {
+          if (currentTime == 0) {
+            value = 0;
+          }
+        }
+        yield value;
+      }
+    }
+
     if (deviceManager.ossDevice != null) {
-      powerStream = deviceManager.ossDevice.supportedDataType[DataType.power];
+      powerStream = deviceManager.ossDevice.supportedDataType[DataType.power]
+          .asBroadcastStream();
       cadenceStream =
           deviceManager.ossDevice.supportedDataType[DataType.cadence];
       batteryStream =
           deviceManager.ossDevice.supportedDataType[DataType.battery];
       deviceName = deviceManager.ossDevice.device.name;
+
+      if (powerStream != null) {
+        calorieStream = calorieStreamFunction();
+      }
     }
 
     return SingleChildScrollView(
@@ -109,7 +193,7 @@ class TrainingScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Expanded(
-                  child: _trainingBox("CALORIES", calorieStream, 0.7),
+                  child: _trainingBoxCalories("CALORIES", calorieStream, 0.7),
                 ),
                 Expanded(
                   child: _trainingBox("HEARTH RATE", hearthRateStream, 0.7),
@@ -125,6 +209,7 @@ class TrainingScreen extends StatelessWidget {
             StartPauseWidget(
               onIconPressed: () {
                 _key.currentState.handleStartStop();
+                isTimerRunning = _key.currentState.getTimerStatus();
               },
               onResetPressed: () {
                 _key.currentState.handleReset();
@@ -135,4 +220,10 @@ class TrainingScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+class PowerData {
+  PowerData(this.time, this.power);
+  int time;
+  int power;
 }
