@@ -2,14 +2,33 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:lstech_app/models/bluetoothDeviceManager.dart';
 import 'package:lstech_app/models/recognizedData.dart';
+import 'package:lstech_app/screens/statisticScreen.dart';
 import 'package:lstech_app/widgets/startPauseWidget.dart';
 import 'package:lstech_app/widgets/stopwatchWidget.dart';
 import 'package:provider/provider.dart';
 
-class TrainingScreen extends StatelessWidget {
+class TrainingScreen extends StatefulWidget {
+  @override
+  _TrainingScreenState createState() => _TrainingScreenState();
+}
+
+class _TrainingScreenState extends State<TrainingScreen> {
   final GlobalKey<StopwatchWidgetState> _key = GlobalKey();
 
+  double caloriesDepense;
+  int cadenceMax;
+  double cadenceMoy;
+  int puissanceMax;
+  double puissanceMoy;
+  bool isTimerRunning;
+  int currentTimerTime;
+
+  bool isResetPressed;
+
   Widget _trainingBox(String units, Stream<int> source, double sizeFactor) {
+    int valueForStatsMax;
+    double valueForStatsMoy;
+
     return Container(
       padding: EdgeInsets.only(top: 5),
       decoration: BoxDecoration(
@@ -25,6 +44,46 @@ class TrainingScreen extends StatelessWidget {
               stream: source,
               builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
                 if (snapshot.hasData) {
+                  if (isResetPressed) {
+                    valueForStatsMoy = null;
+                    valueForStatsMax = null;
+                  } else {
+                    if (isTimerRunning) {
+                      if (valueForStatsMax == null) {
+                        valueForStatsMax = snapshot.data;
+                      }
+                      if (snapshot.data > valueForStatsMax) {
+                        valueForStatsMax = snapshot.data;
+                      }
+                      if (valueForStatsMoy == null) {
+                        valueForStatsMoy = snapshot.data.toDouble();
+                      } else {
+                        valueForStatsMoy =
+                            (valueForStatsMoy + snapshot.data) / 2;
+                      }
+                      switch (units) {
+                        case "POWER":
+                          puissanceMax = valueForStatsMax;
+                          puissanceMoy = valueForStatsMoy;
+                          break;
+                        case "CADENCE":
+                          cadenceMax = valueForStatsMax;
+                          cadenceMoy = valueForStatsMoy;
+                          break;
+                        default:
+                          break;
+                      }
+                    }
+                  }
+
+                  if (cadenceMax == null &&
+                      cadenceMoy == null &&
+                      puissanceMax == null &&
+                      puissanceMoy == null &&
+                      valueForStatsMax == null &&
+                      valueForStatsMoy == null) {
+                    isResetPressed = false;
+                  }
                   return Text(
                     snapshot.data.toString(),
                     style: TextStyle(fontSize: 70 * sizeFactor),
@@ -111,14 +170,18 @@ class TrainingScreen extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final deviceManager = Provider.of<BluetoothDeviceManager>(context);
-    int currentTimerTime = 0;
-    bool isTimerRunning = false;
-
+  void initState() {
+    super.initState();
+    isTimerRunning = false;
+    isResetPressed = false;
     Timer.periodic(Duration(seconds: 1), (timer) {
       currentTimerTime = _key.currentState.getTime();
     });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final deviceManager = Provider.of<BluetoothDeviceManager>(context);
 
     Stream<int> powerStream;
     Stream<int> cadenceStream;
@@ -162,6 +225,7 @@ class TrainingScreen extends StatelessWidget {
             value = 0;
           }
         }
+        caloriesDepense = value;
         yield value;
       }
     }
@@ -213,6 +277,24 @@ class TrainingScreen extends StatelessWidget {
               },
               onResetPressed: () {
                 _key.currentState.handleReset();
+                isResetPressed = true;
+                cadenceMax = null;
+                cadenceMoy = null;
+                puissanceMax = null;
+                puissanceMoy = null;
+                caloriesDepense = null;
+              },
+              onSavePressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => StatisticScreen(
+                            cadenceMax: cadenceMax,
+                            cadenceMoy: cadenceMoy,
+                            puissanceMax: puissanceMax,
+                            puissanceMoy: puissanceMoy,
+                            caloriesDepense: caloriesDepense,
+                            currentTimerTime: currentTimerTime)));
               },
             )
           ],

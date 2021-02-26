@@ -43,7 +43,7 @@ class _StartPauseWidgetState extends State<StartPauseWidget> {
   }
 
   void handleSave() {
-    //widget.onSavePressed();
+    widget.onSavePressed();
   }
 
   @override
@@ -76,7 +76,7 @@ class _StartPauseWidgetState extends State<StartPauseWidget> {
         SizedBox(width: 30),
         isShowingResetAndSaveButton
             ? FlatButton(
-                child: Text("Save"),
+                child: Text("Stats"),
                 onPressed: () {
                   handleSave();
                 },
