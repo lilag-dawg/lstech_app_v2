@@ -25,7 +25,16 @@ dependencies:
     sdk: flutter
   flutter_blue: ^0.7.3
   provider: ^4.0.4
+  flutter_launcher_icons: ^0.8.1
 
+flutter_icons:
+  #  image_path: "assets/images/icon-128x128.png"
+  image_path_android: "assets/LOGO-clair-v.png"
+  image_path_ios: "assets/LOGO-clair-v.png"
+  android: true # can specify file name here e.g. "ic_launcher"
+  ios: true # can specify file name here e.g. "My-Launcher-Icon"
+  adaptive_icon_background: "assets/LOGO-clair-v.png" # only available for Android 8.0 devices and above
+  adaptive_icon_foreground: "assets/LOGO-clair-v.png" # only available for Android 8.0 devices and above
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
