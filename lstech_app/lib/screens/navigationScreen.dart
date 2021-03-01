@@ -32,11 +32,30 @@ class _NavigationScreenState extends State<NavigationScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(
-              'assets/logo.png',
+              'assets/foreground.png',
               fit: BoxFit.contain,
               height: 32,
             ),
-            Container(padding: EdgeInsets.all(8.0), child: Text('Wattza'))
+            Container(
+                padding: EdgeInsets.all(8.0),
+                child: RichText(
+                  text: TextSpan(children: [
+                    TextSpan(
+                        text: 'Wattza',
+                        style: TextStyle(
+                            fontSize: 30, fontWeight: FontWeight.w900)),
+                    WidgetSpan(
+                      child: Transform.translate(
+                        offset: Offset(2, -12),
+                        child: Text(
+                          'TM',
+                          textScaleFactor: 0.5,
+                          style: TextStyle(fontWeight: FontWeight.w900),
+                        ),
+                      ),
+                    )
+                  ]),
+                ))
           ],
         ),
         backgroundColor: constant.lsTechGreen,

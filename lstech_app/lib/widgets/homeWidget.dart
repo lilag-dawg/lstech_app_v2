@@ -14,25 +14,29 @@ class HomeWidget extends StatelessWidget {
     ExpandedValue(
         text:
             "Assurez que votre WattzaTM est bien connecté à votre téléphone."),
-    ExpandedValue(text: "a. Allez dans l’onglet connexion Bluetooth"),
     ExpandedValue(
-        text: "b. Réveiller le WattzaTM en faisant quelques tours de pédale"),
+        text: "a. Allez dans l’onglet connexion Bluetooth",
+        imageUrl: "assets/homescreen_bluetooth.png"),
+    ExpandedValue(
+        text: "b. Réveiller le WattzaTM en faisant quelques tours de pédale."),
     ExpandedValue(
         text: "c. Repérez le WattzaTM à votre écran et appuyez sur connexion."),
     ExpandedValue(
-      text: "d. Votre appareil est maintenant connecté à votre téléphone",
+      text: "d. Votre appareil est maintenant connecté à votre téléphone.",
     )
   ], headerValue: "Connexion Bluetooth");
 
   final Item item3 = Item(body: [
     ExpandedValue(
         text:
-            "1. Cliquez sur l'icônes démarrer au bas de l’écran pour démarrer une séance d’entraînement."),
+            "1. Cliquez sur l'icônes démarrer au bas de l’écran pour démarrer une séance d’entraînement.",
+        imageUrl: "assets/homescreen_play.png"),
     ExpandedValue(
-        text: "2. Cliquez sur le bouton pause pour mettre la séance en pause"),
+        text: "2. Cliquez sur le bouton pause pour mettre la séance en pause.",
+        imageUrl: "assets/homescreen_pause.png"),
     ExpandedValue(
         text:
-            "3. Pour voir votre sommaire d’entraînement, cliquez sur sauvegarder. Il s’agit d’un visionnement éphémère. L’appareil ne conserve pas  en mémoire vos entraînements pour le moment.")
+            "3. Pour voir votre sommaire d’entraînement, cliquez sur stats. Il s’agit d’un visionnement éphémère. L’appareil ne conserve pas  en mémoire vos entraînements pour le moment.")
   ], headerValue: "Effectuer un entraînement");
 
   @override
