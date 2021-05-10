@@ -88,9 +88,12 @@ class _CrankLengthScreenState extends State<CrankLengthScreen> {
               TextButton(
                 child: Text("Apply"),
                 onPressed: () async {
-                  char = deviceManager.ossDevice
-                      .getService("1818")
-                      .getCharacteristic(powerWriteCharactetistic);
+                  if (deviceManager.ossDevice.getService("1818") != null) {
+                    char = deviceManager.ossDevice
+                        .getService("1818")
+                        .getCharacteristic(powerWriteCharactetistic);
+                  }
+
                   if (char != null) {
                     if (num.tryParse(myController.text) == null ||
                         minValue > double.parse(myController.text) ||

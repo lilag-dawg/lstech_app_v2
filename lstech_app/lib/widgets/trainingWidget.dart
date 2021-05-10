@@ -231,16 +231,22 @@ class _TrainingScreenState extends State<TrainingScreen> {
     }
 
     if (deviceManager.ossDevice != null) {
-      powerStream = deviceManager.ossDevice.supportedDataType[DataType.power]
-          .asBroadcastStream();
-      cadenceStream =
-          deviceManager.ossDevice.supportedDataType[DataType.cadence];
-      batteryStream =
-          deviceManager.ossDevice.supportedDataType[DataType.battery];
-      deviceName = deviceManager.ossDevice.device.name;
-
-      if (powerStream != null) {
+      if (deviceManager.ossDevice.supportedDataType
+          .containsKey(DataType.power)) {
+        powerStream = deviceManager.ossDevice.supportedDataType[DataType.power]
+            .asBroadcastStream();
         calorieStream = calorieStreamFunction();
+      }
+      if (deviceManager.ossDevice.supportedDataType
+          .containsKey(DataType.cadence)) {
+        cadenceStream =
+            deviceManager.ossDevice.supportedDataType[DataType.cadence];
+      }
+      if (deviceManager.ossDevice.supportedDataType
+          .containsKey(DataType.battery)) {
+        batteryStream =
+            deviceManager.ossDevice.supportedDataType[DataType.battery];
+        deviceName = deviceManager.ossDevice.device.name;
       }
     }
 

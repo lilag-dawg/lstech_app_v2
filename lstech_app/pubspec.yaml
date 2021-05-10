@@ -15,7 +15,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.0.0+1
+version: 1.0.2+4
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -28,13 +28,12 @@ dependencies:
   flutter_launcher_icons: ^0.8.1
 
 flutter_icons:
-  #  image_path: "assets/images/icon-128x128.png"
-  image_path_android: "assets/LOGO-clair-v.png"
-  image_path_ios: "assets/LOGO-clair-v.png"
+  image_path_android: "assets/foreground.png"
+  image_path_ios: "assets/foreground.png"
   android: true # can specify file name here e.g. "ic_launcher"
   ios: true # can specify file name here e.g. "My-Launcher-Icon"
-  adaptive_icon_background: "assets/LOGO-clair-v.png" # only available for Android 8.0 devices and above
-  adaptive_icon_foreground: "assets/LOGO-clair-v.png" # only available for Android 8.0 devices and above
+  adaptive_icon_background: "assets/512x512_logo.png" # only available for Android 8.0 devices and above
+  adaptive_icon_foreground: "assets/foreground.png" # only available for Android 8.0 devices and above
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -60,6 +59,10 @@ flutter:
   assets:
     - assets/logo.png
     - assets/crank_length.png
+    - assets/foreground.png
+    - assets/homescreen_pause.png
+    - assets/homescreen_play.png
+    - assets/homescreen_bluetooth.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 
