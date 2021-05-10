@@ -3,7 +3,8 @@ import 'package:lstech_app/models/item.dart';
 
 class ExpandedViewWidget extends StatefulWidget {
   final Item data;
-  ExpandedViewWidget({this.data});
+  final Function onPress;
+  ExpandedViewWidget({this.data, this.onPress});
   @override
   _ExpandedViewWidgetState createState() => _ExpandedViewWidgetState();
 }
@@ -38,6 +39,7 @@ class _ExpandedViewWidgetState extends State<ExpandedViewWidget> {
         ExpansionPanelList(
           expansionCallback: (int index, bool isExpanded) {
             setState(() {
+              widget.onPress();
               widget.data.isExpanded = !isExpanded;
             });
           },

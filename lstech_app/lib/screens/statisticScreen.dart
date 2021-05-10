@@ -32,6 +32,7 @@ class StatisticScreen extends StatelessWidget {
   Widget _trainingBox(String units, Object data, double sizeFactor) {
     if (data == null) {
       data = " - ";
+      //data = 172.34234;
     }
     return Container(
       padding: EdgeInsets.only(top: 5),
@@ -84,21 +85,12 @@ class StatisticScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Expanded(
-                  child: _trainingBox("Max RPM", cadenceMax, 0.9),
+                  child: _trainingBox("Max RPM", cadenceMax,
+                      MediaQuery.of(context).size.width / 500),
                 ),
                 Expanded(
-                  child: _trainingBox("Average RPM", cadenceMoy, 0.9),
-                ),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Expanded(
-                  child: _trainingBox("Max Power", puissanceMax, 0.9),
-                ),
-                Expanded(
-                  child: _trainingBox("Average Power", puissanceMoy, 0.9),
+                  child: _trainingBox("Average RPM", cadenceMoy,
+                      MediaQuery.of(context).size.width / 500),
                 ),
               ],
             ),
@@ -106,7 +98,12 @@ class StatisticScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Expanded(
-                  child: _trainingBox("Total calories", caloriesDepense, 1),
+                  child: _trainingBox("Max Power", puissanceMax,
+                      MediaQuery.of(context).size.width / 500),
+                ),
+                Expanded(
+                  child: _trainingBox("Average Power", puissanceMoy,
+                      MediaQuery.of(context).size.width / 500),
                 ),
               ],
             ),
@@ -114,7 +111,17 @@ class StatisticScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Expanded(
-                  child: _timeBox("Time", currentTimerTime, 0.9),
+                  child: _trainingBox("Total calories", caloriesDepense,
+                      MediaQuery.of(context).size.width / 400),
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Expanded(
+                  child: _timeBox("Time", currentTimerTime,
+                      MediaQuery.of(context).size.width / 400),
                 ),
               ],
             ),

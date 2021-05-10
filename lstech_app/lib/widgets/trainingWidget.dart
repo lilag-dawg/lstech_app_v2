@@ -249,15 +249,16 @@ class _TrainingScreenState extends State<TrainingScreen> {
         deviceName = deviceManager.ossDevice.device.name;
       }
     }
-
     return SingleChildScrollView(
       child: Container(
         child: Column(
           //mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _trainingBox("POWER", powerStream, 1.75),
-            _trainingBox("CADENCE", cadenceStream, 1.75),
+            _trainingBox(
+                "POWER", powerStream, MediaQuery.of(context).size.height / 450),
+            _trainingBox("CADENCE", cadenceStream,
+                MediaQuery.of(context).size.height / 500),
             StopwatchWidget(key: _key),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
