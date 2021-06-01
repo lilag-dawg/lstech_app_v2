@@ -76,6 +76,7 @@ class MyBluetoothDevice {
 
     await for (var chunk in c.value) {
       if (chunk.isNotEmpty) {
+        print(chunk);
         flag = chunk[0];
         switch (flag) {
           case 1:
@@ -97,7 +98,7 @@ class MyBluetoothDevice {
             break;
         }
         if (lastCrankRev != 0 && currentCrankRev != 0) {
-          if (currentCadence == lastCadence) {
+          if (currentCrankTime == lastCrankTime && currentCadence != 0) {
             zeroCount += 1;
           } else {
             zeroCount = 0;
@@ -117,9 +118,8 @@ class MyBluetoothDevice {
     if (currentCrankTime < lastCrankTime) {
       currentCrankTime = currentCrankTime + 65536;
     }
-    if (currentCrankTime == lastCrankTime ||
-        (currentCrankRev == lastCrankRev && zeroCount < 3)) {
-      return lastCadence;
+    if (currentCrankTime == lastCrankTime || zeroCount > 3) {
+      return 0;
     } else {
       currentCadence = ((currentCrankRev - lastCrankRev) *
           (1024 * 60) ~/

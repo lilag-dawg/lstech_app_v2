@@ -179,6 +179,31 @@ class _TrainingScreenState extends State<TrainingScreen> {
     });
   }
 
+  Stream<int> timedCounter(Duration interval, [int maxCount]) async* {
+    int i = 0;
+    while (true) {
+      await Future.delayed(interval);
+      yield i++;
+      if (i == maxCount) interval = Duration(seconds: 10);
+    }
+  }
+
+  Stream<int> awaitforTimedCounter(Stream<int> source) async* {
+    int nowTime = 0;
+    int lastTime = 0;
+    Stopwatch _stopwatch = Stopwatch();
+    _stopwatch.start();
+
+    await for (var chunk in source) {
+      //work in progress
+      lastTime = nowTime;
+      yield chunk;
+      nowTime = _stopwatch.elapsedMilliseconds ~/ 1000;
+
+      print(nowTime - lastTime);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final deviceManager = Provider.of<BluetoothDeviceManager>(context);
