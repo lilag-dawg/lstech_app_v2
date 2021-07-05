@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:lstech_app/models/bluetoothDeviceManager.dart';
 import 'package:lstech_app/models/recognizedData.dart';
+import 'package:lstech_app/models/streamUtility.dart';
 import 'package:lstech_app/screens/statisticScreen.dart';
 import 'package:lstech_app/widgets/startPauseWidget.dart';
 import 'package:lstech_app/widgets/stopwatchWidget.dart';
@@ -208,12 +209,15 @@ class _TrainingScreenState extends State<TrainingScreen> {
   Widget build(BuildContext context) {
     final deviceManager = Provider.of<BluetoothDeviceManager>(context);
 
-    Stream<int> powerStream;
-    Stream<int> cadenceStream;
-    Stream<int> batteryStream;
+    Stream<int> powerStream = StreamUtility.powerStreamTest(
+        Duration(seconds: 1)); // only present for testing purposes
+    Stream<int> cadenceStream = StreamUtility.cadenceStreamTest(
+        Duration(seconds: 1)); // only present for testing purposes
+    Stream<int> batteryStream = StreamUtility.batteryStreamTest(
+        Duration(seconds: 1)); // only present for testing purposes
     Stream<int> hearthRateStream;
     Stream<double> calorieStream;
-    String deviceName;
+    String deviceName = 'Sensor Name'; // only present for testing purposes
 
     Stream<double> calorieStreamFunction() async* {
       List<PowerData> powerReading =
