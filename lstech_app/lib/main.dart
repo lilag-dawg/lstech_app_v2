@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
-        title: 'LsTech+ App',
+        title: 'LsTech+ Demo',
         home: NavigationScreen(),
         debugShowCheckedModeBanner: false,
       ),
