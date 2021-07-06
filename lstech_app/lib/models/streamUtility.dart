@@ -3,8 +3,8 @@ import 'dart:math';
 class StreamUtility {
   static Stream<int> powerStreamTest(Duration interval, [int maxCount]) async* {
     int i = 0;
-    int max = 300;
-    int min = 200;
+    int max = 280;
+    int min = 230;
     var rdm = Random();
     while (true) {
       await Future.delayed(interval);
